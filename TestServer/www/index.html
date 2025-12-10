@@ -31,7 +31,9 @@
 	window.addEventListener('message', function(event) {
 		//if (event.origin !== 'https://monou.gg/') return;
 		var gameKey;
-		const send = (d)=> iframe.contentWindow.postMessage({ data:JSON.stringify(d), hash:"test" });
+		const send = (d)=> iframe.contentWindow.postMessage(
+			JSON.stringify({ data:JSON.stringify(d), hash:"test" })
+		);
 		const eventData = JSON.parse(event.data);
    		const data = JSON.parse(eventData.data);
 		var code = document.createElement("div");

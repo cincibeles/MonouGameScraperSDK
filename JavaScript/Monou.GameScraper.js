@@ -67,7 +67,7 @@ Monou.GameScraper = (function(){
 		Advance: async delta=>await send("advance", delta),
 		Advertise: async ()=>{
 			await send("ad", false);
-			await forSuccess();
+			return await forSuccess();
 		},
 		AdvertiseRewarded: async ()=>{
 			await send("adReward", false);
