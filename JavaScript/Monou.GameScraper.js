@@ -38,8 +38,8 @@ Monou.GameScraper = (function(){
 		const data = {key:gameKey, type:type, val:val};
 		const dataJSON = JSON.stringify(data);
 		window.parent.postMessage(
-			JSON.stringify({hash:await generateSignature(gameKey, dataJSON), data:dataJSON})
-			//"https://monou.gg/"
+			JSON.stringify({hash:await generateSignature(gameKey, dataJSON), data:dataJSON}),
+			"*"
 		);
 	}
 	const forSuccess = ()=>{
