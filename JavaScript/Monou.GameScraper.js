@@ -62,6 +62,7 @@ Monou.GameScraper = (function(){
 
 	return {
 		Init: async (k)=>{gameKey = k; await send("init", false); },
+		Send: async (k,v)=>await send(k, v),
 		Start: async ()=>await send("start", false),
 		Finish: async score=>await send("finish", score),
 		Advance: async delta=>await send("advance", delta),
