@@ -69,6 +69,8 @@ namespace Monou
         [DllImport("__Internal")]
         private static extern void MonouGameScraper_Init(string key);
         [DllImport("__Internal")]
+        private static extern void MonouGameScraper_Send(string key, int val);
+        [DllImport("__Internal")]
         private static extern void MonouGameScraper_Start();
         [DllImport("__Internal")]
         private static extern void MonouGameScraper_Finish(int score);
@@ -83,6 +85,7 @@ namespace Monou
 
         void Start(){ MonouGameScraper_Init(MonouKey); }
 
+        public static void Send(string key, int val){ MonouGameScraper_Send(key, val); }
         public static void Starts(){ MonouGameScraper_Start(); }
         public static void Finish(int score){ MonouGameScraper_Finish(score); }
         public static void Advance(int points){ MonouGameScraper_Advance(points); }
@@ -97,6 +100,7 @@ namespace Monou
         }
 #else
         void Start(){ Debug.Log("Monou.GameScraper init with Key: "+MonouKey); }
+        public static void Send(){ Debug.Log("Monou.GameScraper match Starts"); }
         public static void Starts(){ Debug.Log("Monou.GameScraper match Starts"); }
         public static void Finish(int score){ Debug.Log("Monou.GameScraper match Finish: "+score); }
         public static void Advance(int points){ Debug.Log("Monou.GameScraper match Advance: "+points); }
