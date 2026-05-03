@@ -64,7 +64,7 @@ Monou.GameScraper = (function () {
 		}
 	});
 
-	var mRec, canvas, canvasStream, specs,
+	var mRec, canvas, canvasStream, specs, recordCanvas,
 		onMM = e => send("_scrapper_mm", (e => ["MOUSE_MOVE", [e.pageX, e.pageY].join(",")])(e.touch && e.touch[0] || e)),
 		onMD = e => send("_scrapper_md", ["MOUSE_BUTTON", [1, true].join(",")]),
 		onMU = e => send("_scrapper_mu", ["MOUSE_BUTTON", [1, false].join(",")]),
@@ -72,7 +72,29 @@ Monou.GameScraper = (function () {
 		onKU = e => send("_scrapper_ku", ["KEYBOARD", [e.keyCode, false].join(",")]);
 	const start_log = async () => {
 		canvas = document.getElementsByTagName('canvas')[0];
-		canvasStream = canvas.captureStream(30);
+
+		recordCanvas = document.createElement("canvas", { alpha: false });
+		if(canvas.width > canvas.height){
+			recordCanvas.width = ~~(canvas.width * 720 / canvas.height);
+			recordCanvas.height = 720;
+		}else{
+			recordCanvas.width = 720;
+			recordCanvas.height = ~~(canvas.height * 720 / canvas.width);
+		}
+		const recordCtx = recordCanvas.getContext("2d");
+		var updateRecorderCanvas = function() {
+			if(!recordCanvas){ recordCtx=null; return; }
+			recordCtx.clearRect(0,0,recordCanvas.width, recordCanvas.height);
+		    recordCtx.drawImage(
+		        canvas,
+		        0, 0, canvas.width, canvas.height,
+		        0, 0, recordCanvas.width, recordCanvas.height
+		    );
+		    requestAnimationFrame(updateRecorderCanvas);
+		}
+		updateRecorderCanvas();
+
+		canvasStream = recordCanvas.captureStream(30);
 		mRec = new MediaRecorder(canvasStream, { mimeType: "video/webm; codecs=vp9" });
 		mRec.ondataavailable = (event) => {
 			if (event.data.size > 0) {
@@ -90,7 +112,7 @@ Monou.GameScraper = (function () {
 		mRec.start(1000);
 		specs = {
 			"game_slug": "$game_slug",
-			"game_resolution": [canvas.height, canvas.width],
+			"game_resolution": [recordCanvas.width, recordCanvas.height],
 			"hardware_specs": {
 				"cpu": navigator?.hardwareConcurrency,
 				"memory": navigator?.deviceMemory,
@@ -108,7 +130,7 @@ Monou.GameScraper = (function () {
 		specs.duration = specs.end_timestamp - specs.start_timestamp;
 		send("_scrapper_chunk_finish", JSON.stringify(specs));
 		canvasStream.getTracks().forEach(track => track.stop());
-		canvasStream = canvas = mRec = mRec.onstop = mRec.ondataavailable = specs = null;
+		canvasStream = canvas = mRec = mRec.onstop = mRec.ondataavailable = specs = recordCanvas = null;
 		window.removeEventListener("mousemove", onMM); window.removeEventListener("touchmove", onMM);
 		window.removeEventListener("mousedown", onMD); window.removeEventListener("touchstart", onMD);
 		window.removeEventListener("mouseup", onMU); window.removeEventListener("touchend", onMU);
