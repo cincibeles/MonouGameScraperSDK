@@ -41,7 +41,7 @@ Monou.GameScraper = (function () {
 		window.parent.postMessage(
 			JSON.stringify({ hash: await generateSignature(gameKey, dataJSON), data: dataJSON }),
 			"*"
-		); console.log("<<<", type, val)
+		);
 	}
 	const forSuccess = () => {
 		return new Promise((resolve) => {
@@ -62,7 +62,6 @@ Monou.GameScraper = (function () {
 			case "ad": case "adReward": case "sell": waiting = data; secure = true; break;
 			case "log": canLog = data.success; break;
 		}
-		 console.log(">>>", data)
 	});
 
 	var mRec, canvas, canvasStream, specs,
