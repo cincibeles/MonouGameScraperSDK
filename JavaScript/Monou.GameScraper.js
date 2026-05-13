@@ -41,7 +41,7 @@ Monou.GameScraper = (function () {
 		window.parent.postMessage(
 			JSON.stringify({ hash: await generateSignature(gameKey, dataJSON), data: dataJSON }),
 			"*"
-		);
+		); console.log("<<<", type, val)
 	}
 	const forSuccess = () => {
 		return new Promise((resolve) => {
@@ -62,40 +62,19 @@ Monou.GameScraper = (function () {
 			case "ad": case "adReward": case "sell": waiting = data; secure = true; break;
 			case "log": canLog = data.success; break;
 		}
+		 console.log(">>>", data)
 	});
 
-	var mRec, canvas, canvasStream, specs, recordCanvas,
-		onMM = e => send("_scrapper_mm", (e => ["MOUSE_MOVE", [e.pageX, e.pageY].join(",")])(e.touch && e.touch[0] || e)),
-		onMD = e => send("_scrapper_md", ["MOUSE_BUTTON", [1, true].join(",")]),
+	var mRec, canvas, canvasStream, specs,
+		onMM = e => send("_scrapper_mm", (e => ["MOUSE_MOVE", [e.pageX, e.pageY].join(",")])(e.touches && e.touches[0] || e)),
+		onMD = e => send("_scrapper_md", (e => ["MOUSE_BUTTON", [1, true, e.pageX, e.pageY].join(",")])(e.touches && e.touches[0] || e)),
 		onMU = e => send("_scrapper_mu", ["MOUSE_BUTTON", [1, false].join(",")]),
 		onKD = e => send("_scrapper_kd", ["KEYBOARD", [e.keyCode, true].join(",")]),
 		onKU = e => send("_scrapper_ku", ["KEYBOARD", [e.keyCode, false].join(",")]);
 	const start_log = async () => {
 		canvas = document.getElementsByTagName('canvas')[0];
-
-		recordCanvas = document.createElement("canvas", { alpha: false });
-		if(canvas.width > canvas.height){
-			recordCanvas.width = ~~(canvas.width * 720 / canvas.height);
-			recordCanvas.height = 720;
-		}else{
-			recordCanvas.width = 720;
-			recordCanvas.height = ~~(canvas.height * 720 / canvas.width);
-		}
-		const recordCtx = recordCanvas.getContext("2d");
-		var updateRecorderCanvas = function() {
-			if(!recordCanvas){ recordCtx=null; return; }
-			recordCtx.clearRect(0,0,recordCanvas.width, recordCanvas.height);
-		    recordCtx.drawImage(
-		        canvas,
-		        0, 0, canvas.width, canvas.height,
-		        0, 0, recordCanvas.width, recordCanvas.height
-		    );
-		    requestAnimationFrame(updateRecorderCanvas);
-		}
-		updateRecorderCanvas();
-
-		canvasStream = recordCanvas.captureStream(30);
-		mRec = new MediaRecorder(canvasStream, { mimeType: "video/webm; codecs=vp9" });
+		canvasStream = canvas.captureStream(30);
+		mRec = new MediaRecorder(canvasStream, { mimeType: "video/webm; codecs=vp8" });
 		mRec.ondataavailable = (event) => {
 			if (event.data.size > 0) {
 				const reader = new FileReader();
@@ -109,10 +88,10 @@ Monou.GameScraper = (function () {
 		window.addEventListener("mouseup", onMU); window.addEventListener("touchend", onMU);
 		window.addEventListener("keydown", onKD);
 		window.addEventListener("keyup", onKU);
-		mRec.start(1000);
+		mRec.start(100);
 		specs = {
 			"game_slug": "$game_slug",
-			"game_resolution": [recordCanvas.width, recordCanvas.height],
+			"game_resolution": [canvas.height, canvas.width],
 			"hardware_specs": {
 				"cpu": navigator?.hardwareConcurrency,
 				"memory": navigator?.deviceMemory,
@@ -130,7 +109,7 @@ Monou.GameScraper = (function () {
 		specs.duration = specs.end_timestamp - specs.start_timestamp;
 		send("_scrapper_chunk_finish", JSON.stringify(specs));
 		canvasStream.getTracks().forEach(track => track.stop());
-		canvasStream = canvas = mRec = mRec.onstop = mRec.ondataavailable = specs = recordCanvas = null;
+		canvasStream = canvas = mRec = mRec.onstop = mRec.ondataavailable = specs = null;
 		window.removeEventListener("mousemove", onMM); window.removeEventListener("touchmove", onMM);
 		window.removeEventListener("mousedown", onMD); window.removeEventListener("touchstart", onMD);
 		window.removeEventListener("mouseup", onMU); window.removeEventListener("touchend", onMU);
