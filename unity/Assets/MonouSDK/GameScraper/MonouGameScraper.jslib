@@ -34,7 +34,7 @@ var MonouGameScraperLib = {
 		start_log: async function(){
 			this.canvas = document.getElementsByTagName('canvas')[0];
 			this.canvasStream = this.canvas.captureStream(30);
-			this.mRec = new MediaRecorder(this.canvasStream, { mimeType: "video/webm; codecs=vp9" });
+			this.mRec = new MediaRecorder(this.canvasStream, { mimeType: "video/webm; codecs=vp8" });
 			this.mRec.ondataavailable = (event) => { 
 				if (event.data.size > 0) {
 					const reader = new FileReader();
