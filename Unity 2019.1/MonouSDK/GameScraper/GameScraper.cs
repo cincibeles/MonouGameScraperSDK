@@ -90,6 +90,7 @@ public void WorkAsyncResult(string message){ // Recibe un string "taskId|result"
         void Start(){ MonouGameScraper_Init(MonouKey); }
 
         public static void Starts(){ MonouGameScraper_Start(); }
+        public static void Send(string key, int val){ MonouGameScraper_Send(key, val); }
         public static void Finish(int score){ MonouGameScraper_Finish(score); }
         public static void Advance(int points){ MonouGameScraper_Advance(points); }
         public static async Task<bool> Advertise(){
@@ -103,7 +104,7 @@ public void WorkAsyncResult(string message){ // Recibe un string "taskId|result"
         }
 #else
         void Start(){ Debug.Log("Monou.GameScraper init with Key: "+MonouKey); }
-        public static void Send(){ Debug.Log("Monou.GameScraper match Hitus"); }
+        public static void Send(string key, int val){ Debug.Log("Monou.GameScraper Send: " + key + " = " + val); }
         public static void Starts(){ Debug.Log("Monou.GameScraper match Starts"); }
         public static void Finish(int score){ Debug.Log("Monou.GameScraper match Finish: "+score); }
         public static void Advance(int points){ Debug.Log("Monou.GameScraper match Advance: "+points); }

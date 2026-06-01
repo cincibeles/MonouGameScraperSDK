@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity WebGL Player | CircleRun</title>
+    <title>Unity WebGL Player | ColorBars</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
     <script src="TemplateData/UnityProgress.js"></script>
@@ -11,38 +11,15 @@
     <script>
       var unityInstance = UnityLoader.instantiate("unityContainer", "Build/game.json", {onProgress: UnityProgress});
     </script>
-    <style>
-      /* Forzar al contenedor y al canvas interno a respetar el formato vertical 9:16 */
-      #unityContainer, #unityContainer canvas {
-        width: 100% !important;
-        height: auto !important;
-        aspect-ratio: 9 / 16 !important;
-        max-height: 100vh !important;
-        max-width: calc(100vh * 9 / 16) !important;
-        margin: 0 auto !important;
-        display: block !important;
-      }
-      /* Centrar verticalmente todo el juego dentro del espacio gris de la plataforma */
-      .webgl-content {
-        position: absolute !important;
-        top: 50% !important;
-        left: 50% !important;
-        transform: translate(-50%, -50%) !important;
-        width: 100% !important;
-        max-width: 100% !important;
-      }
-      /* Ocultar barra inferior gris si no deseas que altere el alto visual */
-      .footer {
-        display: none !important;
-      }
-    </style>
   </head>
   <body>
     <div class="webgl-content">
-      <div id="unityContainer"></div>
+      <div id="unityContainer" style="width: 750px; height: 1334px"></div>
+      <div class="footer">
+        <div class="webgl-logo"></div>
+        <div class="fullscreen" onclick="unityInstance.SetFullscreen(1)"></div>
+        <div class="title">ColorBars</div>
+      </div>
     </div>
   </body>
 </html>
-
-
-
